@@ -31,7 +31,7 @@ class ContentTypeGatingFieldOverride(FieldOverrideProvider):
             original_group_access = {}
         original_group_access.setdefault(
             CONTENT_GATING_PARTITION_ID,
-            [settings.CONTENT_TYPE_GATE_GROUP_IDS['limited_access']]
+            [settings.CONTENT_TYPE_GATE_GROUP_IDS['full_access']]
         )
 
         return original_group_access
