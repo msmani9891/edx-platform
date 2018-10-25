@@ -19,6 +19,8 @@ from openedx.features.course_duration_limits.config import CONTENT_TYPE_GATING_F
 LOG = logging.getLogger(__name__)
 
 CONTENT_GATING_PARTITION_ID = 51
+COURSE_MODE_AUDIT = u'audit'
+
 
 def create_content_gating_partition(course):
     """
@@ -206,7 +208,7 @@ class ContentTypeGatingPartitionScheme(object):
                 )
                 return cls.FULL_ACCESS
 
-            if mode_slug == course_mode.AUDIT:
+            if mode_slug == COURSE_MODE_AUDIT:
                 # TODO: does the below comment mean there is more work to be done here
                 # Check the user email exceptions here:
                 return cls.LIMITED_ACCESS
