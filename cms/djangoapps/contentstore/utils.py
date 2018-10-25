@@ -15,6 +15,7 @@ from six import text_type
 from django_comment_common.models import assign_default_role
 from django_comment_common.utils import seed_permissions_roles
 from openedx.core.djangoapps.site_configuration.models import SiteConfiguration
+from openedx.features.course_duration_limits.config import CONTENT_TYPE_GATING_STUDIO_UI_FLAG
 from student import auth
 from student.models import CourseEnrollment
 from student.roles import CourseInstructorRole, CourseStaffRole
@@ -449,13 +450,16 @@ def get_visibility_partition_info(xblock, course=None):
     """
     selectable_partitions = []
     # We wish to display enrollment partitions before cohort partitions.
-    enrollment_user_partitions = get_user_partition_info(xblock, schemes=["enrollment_track", "content_type_gate"], course=course)
+    enrollment_user_partitions = get_user_partition_info(xblock, schemes=["enrollment_track"], course=course)
 
     # For enrollment partitions, we only show them if there is a selected group or
     # or if the number of groups > 1.
     for partition in enrollment_user_partitions:
         if len(partition["groups"]) > 1 or any(group["selected"] for group in partition["groups"]):
             selectable_partitions.append(partition)
+
+    if CONTENT_TYPE_GATING_STUDIO_UI_FLAG.is_enabled():
+        selectable_partitions += get_user_partition_info(xblock, schemes=["content_type_gate"], course=course)
 
     # Now add the cohort user partitions.
     selectable_partitions = selectable_partitions + get_user_partition_info(xblock, schemes=["cohort"], course=course)
